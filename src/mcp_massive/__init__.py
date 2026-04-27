@@ -76,7 +76,7 @@ def main() -> None:
 
     # Defer importing server until after env vars are read — this triggers
     # loading numpy and other heavy deps.
-    from .server import run, configure_credentials
+    from .server import run, configure_credentials, mass_mcp
 
     configure_credentials(
         massive_api_key,
@@ -85,5 +85,11 @@ def main() -> None:
         max_tables=max_tables,
         max_rows=max_rows,
     )
+
+    if transport != "stdio":
+        mass_mcp.settings.host = os.environ.get("HOST", "0.0.0.0")
+        port = os.environ.get("PORT") or os.environ.get("MCP_PORT")
+        if port:
+            mass_mcp.settings.port = int(port)
 
     run(transport=transport)
