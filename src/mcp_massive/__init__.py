@@ -91,5 +91,17 @@ def main() -> None:
         port = os.environ.get("PORT") or os.environ.get("MCP_PORT")
         if port:
             mass_mcp.settings.port = int(port)
+        allowed_hosts = os.environ.get("MCP_ALLOWED_HOSTS")
+        if allowed_hosts:
+            mass_mcp.settings.transport_security.allowed_hosts.extend(
+                host.strip() for host in allowed_hosts.split(",") if host.strip()
+            )
+        allowed_origins = os.environ.get("MCP_ALLOWED_ORIGINS")
+        if allowed_origins:
+            mass_mcp.settings.transport_security.allowed_origins.extend(
+                origin.strip()
+                for origin in allowed_origins.split(",")
+                if origin.strip()
+            )
 
     run(transport=transport)
